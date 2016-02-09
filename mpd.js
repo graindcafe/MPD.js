@@ -708,8 +708,8 @@ function MPD(_port, _host, _password){
      * Request status update 
      * @instance@
      */
-    self.updateStatus = function (handler,errorHandler) {
-        issueCommands({command: 'update', handler: handler, error: errorHandler});
+    self.updateStatus = function () {
+        issueCommands({command: 'status', handler: stateHandler});
     };
     /**
      * @instance
