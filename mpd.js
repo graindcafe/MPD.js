@@ -704,7 +704,13 @@ function MPD(_port, _host, _password){
     self.updateDatabase = function(){
         issueCommands('update');
     };
-
+    /**
+     * Request status update 
+     * @instance@
+     */
+    self.updateStatus = function (handler,errorHandler) {
+        issueCommands({command: 'update', handler: handler, error: errorHandler});
+    };
     /**
      * @instance
      * @param {String} [path] - path to the directory you are interested in relative to MPD's music root directory (root is a blank string, never start with '/')
@@ -1891,7 +1897,8 @@ function MPD(_port, _host, _password){
     \******************/
 
 
-    /**
+    
+     /**
      * get the current play time
      * @private
      */
