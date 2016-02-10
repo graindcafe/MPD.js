@@ -1918,7 +1918,7 @@ function MPD(_port, _host, _password){
         var last_time = _private.state.current_song.elapsed_time;
         last_time = last_time?last_time:0;
         var duration = current_song.getDuration();
-        if (Number.isNaN(duration)){
+        if (duration === undefined || Number.isNaN(duration)){
             return last_time + offset;
         }
         return Math.min(last_time + offset, current_song.getDuration());
