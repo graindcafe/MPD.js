@@ -1478,12 +1478,18 @@ function MPD(_port, _host, _password){
             if(value.match(/^\d*(\.\d*)?$/)){
                 value = parseFloat(value);
             }
-            state[key] = value;
+            if (value !== null && value !== "")
+                state[key] = value;
         });
-        if (!'elapsed' in state && 'time' in state && state.time){
-            state.elapsed = state.time.substr(0,state.time.indexOf(':')) - 0;
+        // Enrich state (if it's on same track)
+        if ('song' in state && state.song == _private.state.current_song.queue_idx)
+        {
+            state = Object.assign({}, _private.state, state);
         }
-        if (!'duration' in state && 'time' in state && state.time){
+        if (!('elapsed' in state) && 'time' in state && state.time){
+            state.elapsed = state.time.substr(0, state.time.indexOf(':')) - 0;
+        }
+        if (!('duration' in state) && 'time' in state && state.time){
             state.duration = state.time.substr(state.time.indexOf(':') + 1) - 0;
         }
         //normalize some of the state properties because I don't like them the way they are
