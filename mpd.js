@@ -1016,10 +1016,25 @@ function MPD(_port, _host, _password){
       });
 
       websocket.on('close',onDisconnect);
+      websocket.on('error',onWebsocketError);
 
       _private.socket = websocket;
     }
 
+    /**
+     * De-init function
+     * called after disconnect or websocket error
+     * @private
+     */
+    function destruct(){
+        _private.state.connected = false;
+        _private.socket = null;
+        _private.state.version = null;
+        _private.commandHandlers = [];
+        setInited(false);
+
+        _private.responceProcessor = null; //will throw an error if we get any responces before we reconnect
+    }
 
     /**
      * function called when the websocke connects
@@ -1034,7 +1049,6 @@ function MPD(_port, _host, _password){
         callHandler('Connect', arguments);
     }
 
-
     /**
      * called when we disconnected (unexpectedly)
      * @private
@@ -1043,15 +1057,20 @@ function MPD(_port, _host, _password){
         log("disconnected");
 
         callHandler('Disconnect', arguments);
+        destruct();
+        if(_private.reconnect_time){
+            setTimeout(init, _private.reconnect_time);
+        }
+    }
+    /**
+     * called when we websocket got an error
+     * @private
+     */
+    function onWebsocketError(){
+        log("websocket error");
 
-        _private.state.connected = false;
-        _private.socket = null;
-        _private.state.version = null;
-        _private.commandHandlers = [];
-        setInited(false);
-
-        _private.responceProcessor = null; //will throw an error if we get any responces before we reconnect
-
+        callHandler('WebsocketError', arguments);
+        destruct();
         if(_private.reconnect_time){
             setTimeout(init, _private.reconnect_time);
         }
