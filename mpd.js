@@ -1115,7 +1115,7 @@ function MPD(_port, _host, _password){
     function processComandQueue(is_not_idling){
         var command_string = '';
 
-        if(_private.socket != null && _private.commandHandlers.length > 0 && _private.commandHandlers[0].command !== 'idle'){
+        if(!_private.socket || (_private.commandHandlers.length > 0 && _private.commandHandlers[0].command !== 'idle')){
             //there are outstatnding commands being processed still, wait until the last batch finishes
             //we don't have to timeout call ourself because we will be called when the outstanding commands are done
             //if we are waiting on the idle handler then this doesn't count
